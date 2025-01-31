@@ -7,6 +7,12 @@ import os
 import data
 from torch.utils.data import DataLoader
 import models.unet as unet
+import models.attentionunet as attention
+import models.channelunet as channel
+import models.spatialunet as spatial
+import models.resnetunet as resnet
+import models.inverseunet as inverse
+import models.seprateunet as seprate
 import json
 from torchview import draw_graph
 
@@ -313,8 +319,20 @@ def main():
     test_input_iterator = iter(DataLoader(test_dataset, batch_size=1, shuffle=False))
 
     torch.cuda.empty_cache()
-    #model_name = train_config['model']
-    model = unet.UNet(train_config['activation_fun'])
+
+    model_dict = {
+    "unet": unet,
+    "attention": attention,
+    "channel": channel,
+    "spatial": spatial,
+    "resnet": resnet,
+    "inverse": inverse,
+    "seprate": seprate
+    }
+
+    chosen_model = train_config['model']
+    selected_module = model_dict.get(chosen_model)
+    model = selected_module.Net(train_config['activation_fun'])
     count_parameters(model)
 
     # Create dataloaders

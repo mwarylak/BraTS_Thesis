@@ -51,7 +51,7 @@ class AttentionResBlock(nn.Module):
         return attention_scores
 
 
-class AttentionUNet(nn.Module):
+class Net(nn.Module):
     def __init__(self, activation_fun):
         super().__init__()
 
@@ -59,6 +59,7 @@ class AttentionUNet(nn.Module):
         in_channels  = 4   # Input images have 4 channels
         out_channels = 3   # Mask has 3 channels
         n_filters    = 32  # Scaled down from 64 in original paper
+        activation   = nn.ReLU()
         if activation_fun == 'LeakyReLU':
           activation = nn.LeakyReLU(negative_slope=0.1)
           print('Activation: Leaky ReLU')
@@ -66,7 +67,6 @@ class AttentionUNet(nn.Module):
             print('Activation: ReLU')
 
         # Up and downsampling
-        # Up and downsampling methods
         self.downsample  = nn.MaxPool2d((2,2), stride=2)
         self.upsample    = nn.UpsamplingBilinear2d(scale_factor=2)
 

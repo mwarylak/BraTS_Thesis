@@ -28,7 +28,7 @@ class DecoderBlock(nn.Module):
     def forward(self, x):
         return self.decoder_block(x)
 
-class UNetWithResNet(nn.Module):
+class Net(nn.Module):
     def __init__(self, activation_fun):
         super().__init__()
 
@@ -36,6 +36,7 @@ class UNetWithResNet(nn.Module):
         in_channels  = 4   # Input images have 4 channels
         out_channels = 3   # Mask has 3 channels
         n_filters    = 32
+        activation = nn.ReLU()
         if activation_fun == 'LeakyReLU':
           activation = nn.LeakyReLU(negative_slope=0.1)
           print('Activation: Leaky ReLU')

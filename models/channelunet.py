@@ -70,7 +70,7 @@ class SE_Block(nn.Module):
         # Apply attention
         return x * excitation
 
-class AttentionUNet(nn.Module):
+class Net(nn.Module):
     def __init__(self, activation_fun):
         super().__init__()
 

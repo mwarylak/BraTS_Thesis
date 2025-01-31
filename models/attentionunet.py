@@ -61,7 +61,7 @@ class AttentionBlock(nn.Module):
         return x * psi
 
 
-class AttentionUNet(nn.Module):
+class Net(nn.Module):
     def __init__(self, activation_fun):
         super().__init__()
 
