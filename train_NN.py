@@ -8,6 +8,7 @@ import data
 from torch.utils.data import DataLoader
 import models.unet as unet
 import json
+from torchview import draw_graph
 
 def dice_coefficient(preds, targets, smooth=1e-6):
     preds = torch.sigmoid(preds)
@@ -225,6 +226,7 @@ def plot_learning_curves(train_epoch_losses, val_epoch_losses):
 
     axis.legend(fontsize=12)
     axis.grid(True, which='both', linestyle='--', linewidth=0.5)
+    plt.savefig(f'/content/BraTS_Thesis/Images/Loss_Values.png', bbox_inches='tight', dpi=300) 
     plt.show()
 
 def display_test_sample(model, test_input, test_target, device):
@@ -240,6 +242,9 @@ def display_test_sample(model, test_input, test_target, device):
     dm.display_mask_channels_as_rgb(mask_target, title='Ground Truth as RGB')
     dm.display_side_by_side(image, mask_pred, mask_target)
 
+def draw_model(model):
+    model_graph = draw_graph(model, input_size=(50,4,240,240), expand_nested=False, depth=0)
+    model_graph.visual_graph
 
 def main():
     
@@ -250,7 +255,7 @@ def main():
     test_directory = '/content/BraTS_Thesis/Files/Test_Samples'
 
     h5_files = [f for f in os.listdir(directory) if f.endswith('.h5')]
-    print(f"Found {len(h5_files)} .h5 files:\nExample file names:{h5_files[:3]}")
+    print(f"Found {len(h5_files)} .h5 files:\n")
 
     plt.style.use('ggplot')
     plt.rcParams['figure.facecolor'] = '#FFFFFF'
