@@ -321,13 +321,13 @@ def main():
     torch.cuda.empty_cache()
 
     model_dict = {
-    "unet": unet,
-    "attention": attention,
-    "channel": channel,
-    "spatial": spatial,
-    "resnet": resnet,
-    "inverse": inverse,
-    "seprate": seprate
+    "UNet": unet,
+    "AttentionUNet": attention,
+    "ChannelUNet": channel,
+    "SpatialUNet": spatial,
+    "ResNetUNet": resnet,
+    "InverseUNet": inverse,
+    "SeprateUNet": seprate
     }
 
     chosen_model = train_config['model']
