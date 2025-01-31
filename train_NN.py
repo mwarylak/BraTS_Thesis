@@ -308,6 +308,7 @@ def main():
     test_input_iterator = iter(DataLoader(test_dataset, batch_size=1, shuffle=False))
 
     torch.cuda.empty_cache()
+    #model_name = train_config['model']
     model = unet.UNet(train_config['activation_fun'])
     count_parameters(model)
 

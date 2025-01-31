@@ -1,10 +1,10 @@
 import display_methods_NN as dm
 import torch
 import os
-from torch.utils.data import DataLoader
 import data
 import json
 import models.unet as unet
+import random
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -34,12 +34,17 @@ def main():
         train_config = json.load(f)
 
     test_files = [os.path.join(test_directory, f) for f in os.listdir(test_directory) if f.endswith('.h5')]
-    test_dataset = data.BrainScanDataset(test_files, normalization=train_config['normalization'], deterministic=True)
-    test_input_iterator = iter(DataLoader(test_dataset, batch_size=1, shuffle=False))
+    test_dataset = data.BrainScanDataset(test_files, normalization=train_config['normalization_type'], deterministic=True)
+    
+    random_index = random.randint(0, len(test_dataset) - 1)
+    test_input, test_target = test_dataset[random_index]
+    test_input = test_input.unsqueeze(0)  
+    test_target = test_target.unsqueeze(0)  
 
-    model = unet.UNet().to(device)  # Move model to device
+    model = unet.UNet(train_config['activation_fun']).to(device)  
     model = load_model(model, path='/content/BraTS_Thesis/models_weights/unet_weights.pth')
 
-    # Get an image from the validation dataset that the model hasn't been trained on
-    test_input, test_target = next(test_input_iterator)  # Ensure this is a valid iterator
     test_sample_from_saved_model(model, test_input, test_target, device)
+
+if __name__ == "__main__":
+    main()

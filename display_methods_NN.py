@@ -1,5 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from datetime import datetime
+
+now = datetime.now().strftime("%H:%M:%S")
 
 def display_image_channels(image, title='Image Channels'):
     channel_names = ['T1-weighted (T1)', 'T1-weighted post contrast (T1c)', 'T2-weighted (T2)', 'Fluid Attenuated Inversion Recovery (FLAIR)']
@@ -11,6 +14,7 @@ def display_image_channels(image, title='Image Channels'):
         ax.set_title(channel_names[idx])
     plt.tight_layout()
     plt.suptitle(title, fontsize=20, y=1.03)
+    plt.savefig(f'/content/BraTS_Thesis/Images/{title}_{now}.png', bbox_inches='tight', dpi=300) 
     plt.show()
 
 def display_mask_channels_as_rgb(mask, title='Mask Channels as RGB'):
@@ -24,6 +28,7 @@ def display_mask_channels_as_rgb(mask, title='Mask Channels as RGB'):
         ax.set_title(channel_names[idx])
     plt.suptitle(title, fontsize=20, y=0.93)
     plt.tight_layout()
+    plt.savefig(f'/content/BraTS_Thesis/Images/{title}_{now}.png', bbox_inches='tight', dpi=300) 
     plt.show()
 
 def overlay_masks_on_image(image, mask, title='Brain MRI with Tumour Masks Overlay'):
@@ -38,6 +43,7 @@ def overlay_masks_on_image(image, mask, title='Brain MRI with Tumour Masks Overl
     plt.imshow(rgb_image)
     plt.title(title, fontsize=18, y=1.02)
     plt.axis('off')
+    plt.savefig(f'/content/BraTS_Thesis/Images/{title}_{now}.png', bbox_inches='tight', dpi=300) 
     plt.show()
 
 def overlay_masks(image, mask, alpha=0.5, title='Brain MRI with Tumour Masks Overlay'):
@@ -70,5 +76,7 @@ def display_side_by_side(image, pred_mask, mask, title="Prediction Overlay"):
     plt.imshow(overlay_mask)
     plt.title('Brain MRI with Tumour Masks Overlay', fontsize=18, y=1.02)
     plt.axis('off')
+    
+    plt.savefig(f'/content/BraTS_Thesis/Images/{title}_{now}.png', bbox_inches='tight', dpi=300)  
 
     plt.show()
