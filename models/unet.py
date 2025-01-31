@@ -40,7 +40,6 @@ class UNet(nn.Module):
           activation = nn.LeakyReLU(negative_slope=0.1)
           print('leaky')
 
-
         # Up and downsampling
         self.downsample  = nn.MaxPool2d((2,2), stride=2)
         self.upsample    = nn.UpsamplingBilinear2d(scale_factor=2)

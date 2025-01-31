@@ -7,7 +7,7 @@ import os
 import data
 from torch.utils.data import DataLoader
 import models.unet as unet
-
+import json
 
 def dice_coefficient(preds, targets, smooth=1e-6):
     preds = torch.sigmoid(preds)
@@ -166,7 +166,7 @@ def train_model(model, train_dataloader, val_dataloader, config, verbose=True, l
         val_epoch_losses.append(avg_val_loss)
 
         if epoch % 5 == 0 and model_saving:
-            path = f'/content/drive/MyDrive/Praca_Magisterska/Modele/attention_unet_weights_{epoch}.pth'
+            path = f'/content/model_weights_{epoch}.pth'
             save_model(model, path)
             print(f"Model saved at epoch {epoch} to {path}")
 
@@ -243,23 +243,11 @@ def display_test_sample(model, test_input, test_target, device):
 
 def main():
     
-    train_config = {
-    'device': 'cuda' if torch.cuda.is_available() else 'cpu',
-    'n_epochs': 50,
-    'batch_size': 64,
-    'learning_rate': 1e-3,
-    'batches_per_epoch': 64,
-    'lr_decay_factor': 1,
-    'normalization_type': '', #
-    'augmentation_types': [],
-    'model_saving': True, 
-    'loss_function': 'BCE',
-    'activation_fun': 'ReLU',
-    'model': 'UNet' 
-    }
+    with open('/content/BraTS_Thesis/NN_config.json', 'r') as f:
+        train_config = json.load(f)
 
     directory = "/content/BraTS2020_training_data/content/data"
-    test_directory = '/BraTS_Thesis/Files/Test_Samples'
+    test_directory = '/content/BraTS_Thesis/Files/Test_Samples'
 
     h5_files = [f for f in os.listdir(directory) if f.endswith('.h5')]
     print(f"Found {len(h5_files)} .h5 files:\nExample file names:{h5_files[:3]}")
@@ -271,7 +259,7 @@ def main():
     augmentation_types = train_config['augmentation_types'] #augmentation type: NEC_ET, random, mixup lub cutmix
     normalization = train_config['normalization_type'] #normalization type: min-max, z-score lub percent
 
-    with open("/BraTS_Thesis/Files/h5files.txt", "r") as file:
+    with open("/content/BraTS_Thesis/Files/h5files.txt", "r") as file:
         lesion_files = [line.strip() for line in file]
 
     #Split data for train, valid and tests

@@ -1,0 +1,14 @@
+{
+    "device": "cuda",
+    "n_epochs": 50,
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "batches_per_epoch": 64,
+    "lr_decay_factor": 1,
+    "normalization_type": "",
+    "augmentation_types": [],
+    "model_saving": true,
+    "loss_function": "BCE",
+    "activation_fun": "ReLU",
+    "model": "UNet"
+}
