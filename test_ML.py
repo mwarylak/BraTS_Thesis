@@ -5,6 +5,7 @@ import h5py
 import os
 from sklearn.preprocessing import StandardScaler
 from display_methods import display_prediction_groundtruth
+from sklearn.model_selection import train_test_split
 
 def load_model(filename):
   return load(filename)
@@ -35,6 +36,10 @@ def main():
   scaler = StandardScaler()
   features = extract_features(image)
   labels = multi_class_mask.flatten()
+
+  X_train, X_test, _, _ = train_test_split(features, labels, test_size=0.2, random_state=42)
+  _ = scaler.fit_transform(X_train)
+  _ = scaler.transform(X_test)
   features_scaled = scaler.transform(features)
 
   multimodel = load_model('svm_multimodel.joblib')
