@@ -166,7 +166,7 @@ def main():
     elif model_type == 'Random_Forest':
        model = RandomForestClassifier(n_estimators=100, random_state=42)
 
-    y_pred, y_test, multimodel = train_model(model, files[:200], directory, batch_size=batch, norm_type=normalization)
+    y_pred, y_test, multimodel = train_model(model, files, directory, batch_size=batch, norm_type=normalization)
 
     if model_saving:
        save_model(multimodel, f'{model_type}.joblib')
