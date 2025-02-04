@@ -28,32 +28,33 @@ To start training the neural network model, it is enough to clone the repository
 
 It is also possible to perform tests on one of the three prepared neural network models - UNet, AttentionUNet and UNet with ResNet18 encoder. To do this, you need to run the cell with the test_NN.py script and properly transform the NN_config.json file. 
 For the UNet model, the necessary settings are:
-    “device": “cuda”,
-    “batch_size": 64,
-    “learning_rate": 0.001,
-    “batches_per_epoch": 64,
-    “loss_function": “BCE”,
-    “activation_fun": “LeakyReLU”,
-    “model": “UNet”.
+  -  “device": “cuda”,
+  -  “batch_size": 64,
+  -   “learning_rate": 0.001,
+  - “batches_per_epoch": 64,
+  -  “loss_function": “BCE”,
+  - “activation_fun": “LeakyReLU”,
+  - “model": “UNet”.
 
 For AttentionUNet:
-    “device": “cuda”,
-    “batch_size": 64,
-    “learning_rate": 0.001,
-    “batches_per_epoch": 64,
-    “loss_function": “BCE”,
-    “activation_fun": “ReLU”,
-    “model": “AttentionUNet”
+  -  “device": “cuda”,
+  -  “batch_size": 64,
+  - “learning_rate": 0.001,
+  - “batches_per_epoch": 64,
+  - “loss_function": “BCE”,
+  - “activation_fun": “ReLU”,
+  -  “model": “AttentionUNet”
 
 For UNet with ResNet:
-    “device": “cuda”,
-    “batch_size": 64,
-    “learning_rate": 0.001,
-    “batches_per_epoch": 64,
-    “loss_function": “BCE”,
-    “activation_fun": “LeakyReLU”,
-    “model": "ResNetUNet"
+  -  “device": “cuda”,
+  -  “batch_size": 64,
+  -  “learning_rate": 0.001,
+  -  “batches_per_epoch": 64,
+  -  “loss_function": “BCE”,
+  -  “activation_fun": “LeakyReLU”,
+  -  “model": "ResNetUNet"
 
 Implementation of all models and their training and testing are also possible through the BraTS_Segmentation_NN.ipynb notebook. However, it requires running more consecutive cells and attaching the corresponding files from the GitHub repository.
 
 For training and testing of Random Forest and SVM models, also the BraTS_Segmentation.ipynb notebook is used. To run training or testing of the corresponding models also needs to complete the configuration file ML_config.json by selecting the name of the model to train and then run the cell with the script train_ML.py or test_ML.py.
+In the case of the Random Forest algorithm, there is no way to test it - the trained model is too large to store in a git repository. First you need to do the training and then use the trained model for testing.

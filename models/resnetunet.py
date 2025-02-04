@@ -28,7 +28,7 @@ class DecoderBlock(nn.Module):
     def forward(self, x):
         return self.decoder_block(x)
 
-class UNetWithResNet(nn.Module):
+class Net(nn.Module):
     def __init__(self, activation_fun):
         super().__init__()
 

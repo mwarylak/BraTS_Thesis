@@ -4,6 +4,8 @@ import os
 import data
 import json
 import models.unet as unet
+import models.attentionunet as attention
+import models.resnetunet as resnet
 import random
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -40,9 +42,18 @@ def main():
     test_input, test_target = test_dataset[random_index]
     test_input = test_input.unsqueeze(0)  
     test_target = test_target.unsqueeze(0)  
+    
+    if train_config['model'] == 'UNet':
+        model = unet.Net(train_config['activation_fun']).to(device)  
+        model = load_model(model, path='/content/BraTS_Thesis/models_weights/unet_weights.pth')
 
-    model = unet.UNet(train_config['activation_fun']).to(device)  
-    model = load_model(model, path='/content/BraTS_Thesis/models_weights/unet_weights.pth')
+    elif train_config['model'] == "AttentionUNet":
+        model = attention.Net(train_config['activation_fun']).to(device)  
+        model = load_model(model, path='/content/BraTS_Thesis/models_weights/attentionunet_weights.pth')
+
+    elif train_config['model'] == "ResNetUNet":
+        model = resnet.Net(train_config['activation_fun']).to(device)  
+        model = load_model(model, path='/content/BraTS_Thesis/models_weights/resnetunet_weights.pth')
 
     test_sample_from_saved_model(model, test_input, test_target, device)
 
