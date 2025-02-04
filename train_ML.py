@@ -150,7 +150,7 @@ def main():
     
     directory = "/content/BraTS2020_training_data/content/data"
 
-    with open("/home/magda/Pulpit/BraTS_Thesis/Files/h5files.txt", "r") as file:
+    with open("/content/BraTS_Thesis/Files/h5files.txt", "r") as file:
         files = [line.strip() for line in file]
 
     with open('/content/BraTS_Thesis/ML_config.json', 'r') as f:
@@ -159,15 +159,18 @@ def main():
     model_type = train_config['model']
     normalization = train_config['normalization_type']
     model_saving = train_config['model_saving']
+    batch = train_config['batch_size']
 
     if model_type == 'SVM':
         model = OneVsOneClassifier(LinearSVC(random_state=42))
     elif model_type == 'Random_Forest':
        model = RandomForestClassifier(n_estimators=100, random_state=42)
 
-    y_pred, y_test, multimodel = train_model(model, files[:200], directory, batch_size=100, norm_type=normalization)
+    y_pred, y_test, multimodel = train_model(model, files[:200], directory, batch_size=batch, norm_type=normalization)
 
     if model_saving:
-       save_model(multimodel, f'{model_type}_multimodel.joblib')
+       save_model(multimodel, f'{model_type}.joblib')
 
 
+if __name__ == "__main__":
+    main()
