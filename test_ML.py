@@ -46,8 +46,9 @@ def main():
   _ = scaler.fit_transform(X_train)
   _ = scaler.transform(X_test)
   features_scaled = scaler.transform(features)
-
-  multimodel = load_model(f'/content/BraTS_Thesis/models_weights/{train_config['model']}.joblib')
+  
+  model = train_config['model']
+  multimodel = load_model(f'/content/BraTS_Thesis/models_weights/{model}.joblib')
 
   pred_mask = multimodel.predict(features_scaled)
   pred_mask_image = pred_mask.reshape(multi_class_mask.shape)
