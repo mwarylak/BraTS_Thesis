@@ -1,3 +1,5 @@
 {
-    "model": "SVM"
+    "model": "SVM",
+    "normalization_type": "",
+    "model_saving": true
 }

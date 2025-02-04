@@ -1,4 +1,4 @@
-import display_methods_NN as dm
+import display_methods as dm
 import torch
 import os
 import data

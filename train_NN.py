@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
-import display_methods_NN as dm
+import display_methods as dm
 from torch import nn
 import os
 import data
