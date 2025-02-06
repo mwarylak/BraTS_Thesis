@@ -2,7 +2,7 @@
 
 The prepared repository allows to train machine learning algorithms and convolutional neural networks for the task of semantic segmentation of brain tumor lesions. The BraTS2020 collection was used to train and validate the models. 
 
-To start training the neural network model, it is enough to clone the repository (Google Colaboratory is the recommended environment using the command !git clone https://github.com/mwarylak/BraTS_Thesis.git) and run successive **BraTS_Segmentation.ipynb** notepad cells up to the cell with the **train_NN.py** script. It is also necessary to complete the *NN_config.json* file in config_files folder, in which the learning parameters are set. Among the parameters are available:
+To start training the neural network model, it is enough to clone the repository (Google Colaboratory is the recommended environment using the command `!git clone https://github.com/mwarylak/BraTS_Thesis.git`) and run successive **BraTS_Segmentation.ipynb** notepad cells up to the cell with the **train_NN.py** script. It is also necessary to complete the *NN_config.json* file in config_files folder, in which the learning parameters are set. Among the parameters are available:
 - **device** - the device on which the training will be performed
 - **n_epochs** - number of training epochs 
 - **batch_size** 
