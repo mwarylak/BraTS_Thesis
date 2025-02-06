@@ -19,17 +19,16 @@ def extract_features(image):
     for channel in range(image.shape[0]):
         channel_image = image[channel, :, :]
         lbp = local_binary_pattern(channel_image, P=8, R=1.0, method='uniform')
-        features.append(channel_image.flatten())  # Intensywność pikseli
-        features.append(lbp.flatten())  # LBP jako cechy tekstury
-    return np.array(features).T  # wektor cech dla każdego piksela
+        features.append(channel_image.flatten()) 
+        features.append(lbp.flatten())  
+    return np.array(features).T  
 
 def train_model(model, images, directory, batch_size, norm_type = ''):
-    # Przygotowanie zmiennych tymczasowych do zapisywania cech i etykiet
+
     print(f'Model: {model}\nNormalization: {norm_type}')
     feature_file = TemporaryFile()
     label_file = TemporaryFile()
 
-    # StandardScaler inicjalizowany przed pętlą
     scaler = StandardScaler()
 
     files = images
@@ -49,24 +48,19 @@ def train_model(model, images, directory, batch_size, norm_type = ''):
                     print(f"No mask found for {file_name}, skipping.")
                     continue
                 mask = file['mask'][()].transpose(2, 0, 1)
-                #print(f"Processing file: {file_name}")
 
-                #Normalizacja min - max
                 if norm_type == 'min-max':
-                  #print("MinMAX")
-                  for i in range(image.shape[0]):    # Iterate over channels
-                    min_val = np.min(image[i])     # Find the min value in the channel
-                    image[i] = image[i] - min_val  # Shift values to ensure min is 0
-                    max_val = np.max(image[i]) + 1e-4     # Find max value to scale max to 1 now.
+                  for i in range(image.shape[0]):    
+                    min_val = np.min(image[i])     
+                    image[i] = image[i] - min_val 
+                    max_val = np.max(image[i]) + 1e-4     
                     image[i] = image[i] / max_val
 
-                #Normalizacja Z-score
                 elif norm_type == 'z_score':
                   mean = image.mean()
                   std = image.std()
                   image = (image - mean) / std
 
-                #Normalizacja Percentylowa (Clipping)
                 elif norm_type == 'percent':
                   p2, p98 = np.percentile(image, (2, 98))
                   image_clipped = np.clip(image, p2, p98)
@@ -75,7 +69,6 @@ def train_model(model, images, directory, batch_size, norm_type = ''):
                 else:
                   pass
 
-                # Przygotowanie danych: maska wieloklasowa
                 nec_mask = mask[0, :, :]
                 ed_mask = mask[1, :, :]
                 et_mask = mask[2, :, :]
@@ -85,52 +78,42 @@ def train_model(model, images, directory, batch_size, norm_type = ''):
                 multi_class_mask[ed_mask > 0] = 2
                 multi_class_mask[et_mask > 0] = 3
 
-                # Ekstrakcja cech i etykiet
                 features = extract_features(image)
                 labels = multi_class_mask.flatten()
-                #print(f'Feat: {features.shape}, labels: {labels.shape}, image:{image.shape}, mask:{mask.shape}')
-                # Dodanie cech i etykiet do bieżącej partii
                 batch_features.append(features)
                 batch_labels.append(labels)
 
-        # Łączenie danych z partii
-        if batch_features:  # Upewnij się, że batch_features nie jest pusty
+        if batch_features:  
             batch_features = np.vstack(batch_features)
             batch_labels = np.hstack(batch_labels)
 
-            # Dopasowanie skalera na bieżącej partii i przeskalowanie
             if batch_start == 0:
-                scaler.fit(batch_features)  # Dopasowanie skalera na pierwszej partii
+                scaler.fit(batch_features)  
             batch_features_scaled = scaler.transform(batch_features)
 
-            # Zapisanie przeskalowanych cech i etykiet do plików tymczasowych
             feature_file.seek(0, os.SEEK_END)
             np.save(feature_file, batch_features_scaled)
 
             label_file.seek(0, os.SEEK_END)
             np.save(label_file, batch_labels)
 
-    # Wczytanie wszystkich danych cech i etykiet z plików tymczasowych
     feature_file.seek(0)
     label_file.seek(0)
 
     try:
         all_features = np.load(feature_file, allow_pickle=True)
         all_labels = np.load(label_file, allow_pickle=True)
-        print(f"Wczytano {all_features.shape} cech i {all_labels.shape} etykiet.")
+        print(f"Read {all_features.shape} features and {all_labels.shape} labels.")
     except Exception as e:
-        print("Wystąpił problem podczas wczytywania danych:", e)
+        print("There was a problem while loading the data:", e)
 
-    # Dodatkowa kontrola przed podziałem na dane treningowe i testowe
-    print(f"Liczba próbek: {len(all_features)}, liczba etykiet: {len(all_labels)}")
+    print(f"Number of samples {len(all_features)}, Number of labels: {len(all_labels)}")
     if len(all_features) == 0 or len(all_labels) == 0:
-        raise ValueError("Brak danych do podziału. Sprawdź, czy obrazy zawierają maski.")
+        raise ValueError("No data to split. Check if the images contain masks.")
 
     print("Unique classes in labels:", np.unique(all_labels))
 
-    # Podział na dane treningowe i testowe
     X_train, X_test, y_train, y_test = train_test_split(all_features, all_labels, test_size=0.2, random_state=42)
-
     multimodel = model
     multimodel.fit(X_train, y_train)
 
@@ -153,7 +136,7 @@ def main():
     with open("/content/BraTS_Thesis/Files/h5files.txt", "r") as file:
         files = [line.strip() for line in file]
 
-    with open('/content/BraTS_Thesis/ML_config.json', 'r') as f:
+    with open('/content/BraTS_Thesis/config_files/ML_config.json', 'r') as f:
         train_config = json.load(f)
 
     model_type = train_config['model']
@@ -166,10 +149,10 @@ def main():
     elif model_type == 'Random_Forest':
        model = RandomForestClassifier(n_estimators=100, random_state=42)
 
-    y_pred, y_test, multimodel = train_model(model, files, directory, batch_size=batch, norm_type=normalization)
+    y_pred, y_test, trained_model = train_model(model, files, directory, batch_size=batch, norm_type=normalization)
 
     if model_saving:
-       save_model(multimodel, f'{model_type}.joblib')
+       save_model(trained_model, f'{model_type}.joblib')
 
 
 if __name__ == "__main__":

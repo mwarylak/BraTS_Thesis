@@ -17,10 +17,9 @@ import json
 from torchview import draw_graph
 
 def dice_coefficient(preds, targets, smooth=1e-6):
+    
     preds = torch.sigmoid(preds)
-
     preds = (preds > 0.5).float()
-
     preds = preds.view(-1)
     targets = targets.view(-1)
 
@@ -78,14 +77,11 @@ class CombinedLoss(nn.Module):
         super(CombinedLoss, self).__init__()
         self.weight_dice = weight_dice
         self.weight_bce = weight_bce
-        self.bce_loss = nn.BCEWithLogitsLoss()  # Wagi dla każdej klasy
+        self.bce_loss = nn.BCEWithLogitsLoss()  
 
     def forward(self, pred, target):
-        # Entropia krzyżowa
         bce_loss_value = self.bce_loss(pred, target)
-        # Dice Loss
         dice_loss_value = 1 - dice_coefficient(pred, target)
-        # Połączona strata
         return self.weight_bce * bce_loss_value + self.weight_dice * dice_loss_value
 
 def train_model(model, train_dataloader, val_dataloader, config, verbose=True, loss_function='BCE', model_saving='True'):
@@ -115,12 +111,10 @@ def train_model(model, train_dataloader, val_dataloader, config, verbose=True, l
 
     print("Training...")
     for epoch in range(1, n_epochs + 1):
-        # Decay learning rate
         current_lr = learning_rate * (lr_decay_factor ** (epoch - 1))
         for param_group in optimizer.param_groups:
             param_group['lr'] = current_lr
 
-        # Training step
         model.train()
         train_epoch_loss = 0
         total_dice, total_precision, total_recall, total_accuracy = 0, 0, 0, 0
@@ -196,8 +190,6 @@ def validate_model(model, val_dataloader, loss_fn, device):
 
             # Forward pass
             val_preds = model(val_inputs)
-
-            # Loss calculation
             loss = loss_fn(val_preds, val_targets)
             val_loss += loss.item()
 
@@ -219,11 +211,9 @@ def validate_model(model, val_dataloader, loss_fn, device):
 def plot_learning_curves(train_epoch_losses, val_epoch_losses):
     fig, axis = plt.subplots(1, 1, figsize=(10, 6))
 
-    # Plot training and validation loss (NaN is used to offset epochs by 1)
     axis.plot([np.NaN] + train_epoch_losses, color='#636EFA', marker='o', linestyle='-', linewidth=2, markersize=5, label='Training Loss')
     axis.plot([np.NaN] + val_epoch_losses,   color='#EFA363', marker='s', linestyle='-', linewidth=2, markersize=5, label='Validation Loss')
 
-    # Adding title, labels and formatting
     axis.set_title('Training and Validation Loss Over Epochs', fontsize=16)
     axis.set_xlabel('Epoch', fontsize=14)
     axis.set_ylabel('Loss', fontsize=14)
@@ -254,7 +244,7 @@ def draw_model(model):
 
 def main():
     
-    with open('/content/BraTS_Thesis/NN_config.json', 'r') as f:
+    with open('/content/BraTS_Thesis/config_files/NN_config.json', 'r') as f:
         train_config = json.load(f)
 
     directory = "/content/BraTS2020_training_data/content/data"
@@ -274,7 +264,7 @@ def main():
         lesion_files = [line.strip() for line in file]
 
     #Split data for train, valid and tests
-    training_files = [os.path.join(directory, f) for f in os.listdir(directory) if f.endswith('.h5')] #h5_files_copy]
+    training_files = [os.path.join(directory, f) for f in os.listdir(directory) if f.endswith('.h5')] 
     np.random.seed(42)
     np.random.shuffle(training_files)
 
@@ -305,17 +295,10 @@ def main():
                     if augmented_image != '':
                         train_files.append(augmented_image)
 
-
     # Create the datasets
     train_dataset = data.BrainScanDataset(train_files, normalization=normalization)
     val_dataset = data.BrainScanDataset(val_files, normalization = normalization, deterministic=True)
     test_dataset = data.BrainScanDataset(test_files, normalization=normalization, deterministic=True)
-
-    # Sample dataloaders
-    train_dataloader = DataLoader(train_dataset, batch_size=5, shuffle=True)
-    val_dataloader = DataLoader(val_dataset, batch_size=5, shuffle=False)
-
-    # Use this to generate test images to view later
     test_input_iterator = iter(DataLoader(test_dataset, batch_size=1, shuffle=False))
 
     torch.cuda.empty_cache()
@@ -343,10 +326,7 @@ def main():
     train_epoch_losses, val_epoch_losses = train_model(model, train_dataloader, val_dataloader, train_config, verbose=True, loss_function=train_config['loss_function'], model_saving=train_config['model_saving'])
 
     plot_learning_curves(train_epoch_losses, val_epoch_losses)
-    # Set so model and these images are on the same device
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-    # Get an image from the validation dataset that the model hasn't been trained on
     test_input, test_target = next(test_input_iterator)
     display_test_sample(model, test_input, test_target, device)
 

@@ -59,25 +59,21 @@ class SE_Block(nn.Module):
         self.activation = activation
 
     def forward(self, x):
-        # Squeeze operation (Global Average Pooling)
-        avg_pool = torch.mean(x, dim=[2, 3], keepdim=True)  # (B, C, 1, 1)
-        # Excitation operation
+        avg_pool = torch.mean(x, dim=[2, 3], keepdim=True)  
         excitation = self.fc1(avg_pool)
         excitation = self.activation(excitation)
         excitation = self.fc2(excitation)
         excitation = self.sigmoid(excitation)
 
-        # Apply attention
         return x * excitation
 
 class Net(nn.Module):
     def __init__(self, activation_fun):
         super().__init__()
 
-        # Config
-        in_channels  = 4   # Input images have 4 channels
-        out_channels = 3   # Mask has 3 channels
-        n_filters    = 32  # Scaled down from 64 in original paper
+        in_channels  = 4 
+        out_channels = 3   
+        n_filters    = 32  
         activation   = nn.ReLU()
         if activation_fun == 'LeakyReLU':
           activation = nn.LeakyReLU(negative_slope=0.1)
@@ -85,7 +81,7 @@ class Net(nn.Module):
         else:
             print('Activation: ReLU')
 
-        # Up and downsampling methods
+        # Up and downsampling 
         self.downsample  = nn.MaxPool2d((2,2), stride=2)
         self.upsample    = nn.UpsamplingBilinear2d(scale_factor=2)
 
@@ -111,7 +107,7 @@ class Net(nn.Module):
         self.dec_block_2 = DecoderBlock(4*n_filters, 1*n_filters, activation)
         self.dec_block_1 = DecoderBlock(2*n_filters, 1*n_filters, activation)
 
-        # Output projection
+        # Output proection
         self.output      = nn.Conv2d(1*n_filters,  out_channels, kernel_size=(1,1), stride=1, padding=0)
 
         self.att_res_block_1 = AttentionResBlock(1*n_filters)
@@ -119,13 +115,14 @@ class Net(nn.Module):
         self.att_res_block_3 = AttentionResBlock(4*n_filters)
         self.att_res_block_4 = AttentionResBlock(8*n_filters)
 
-         # Channel Attention Block (Kanałowa uwaga)
+         # Channel Attention 
         self.channel_att_1 = SE_Block(2*n_filters)
         self.channel_att_2 = SE_Block(4*n_filters)
         self.channel_att_3 = SE_Block(8*n_filters)
         self.channel_att_4 = SE_Block(16*n_filters)
 
     def forward(self, x):
+            #Encoder
             enc_1 = self.enc_block_1(x)
             x     = self.downsample(enc_1)
             enc_2 = self.enc_block_2(x)
@@ -140,26 +137,26 @@ class Net(nn.Module):
 
             # Decoder
             x     = self.upsample(dec_4)
-            att_4 = self.att_res_block_4(dec_4, enc_4, enc_4)  # QKV
-            x     = torch.cat((x, att_4), axis=1)  # Add attention masked value rather than concat
+            att_4 = self.att_res_block_4(dec_4, enc_4, enc_4)  
+            x     = torch.cat((x, att_4), axis=1)  
             x     = self.channel_att_4(x)
 
             dec_3 = self.dec_block_4(x)
             x     = self.upsample(dec_3)
             att_3 = self.att_res_block_3(dec_3, enc_3, enc_3)
-            x     = torch.cat((x, att_3), axis=1)  # Add attention
+            x     = torch.cat((x, att_3), axis=1) 
             x     = self.channel_att_3(x)
 
             dec_2 = self.dec_block_3(x)
             x     = self.upsample(dec_2)
             att_2 = self.att_res_block_2(dec_2, enc_2, enc_2)
-            x     = torch.cat((x, att_2), axis=1)  # Add attention
+            x     = torch.cat((x, att_2), axis=1)  
             x     = self.channel_att_2(x)
 
             dec_1 = self.dec_block_2(x)
             x     = self.upsample(dec_1)
             att_1 = self.att_res_block_1(dec_1, enc_1, enc_1)
-            x     = torch.cat((x, att_1), axis=1)  # Add attention
+            x     = torch.cat((x, att_1), axis=1)  
             x     = self.channel_att_1(x)
 
             x     = self.dec_block_1(x)

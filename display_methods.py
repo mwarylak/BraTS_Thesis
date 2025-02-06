@@ -86,12 +86,10 @@ def display_side_by_side(image, pred_mask, mask, title="Prediction Overlay"):
 def display_combined_mask_as_rgb(mask, title='Combined Mask as RGB'):
     rgb_mask = np.zeros((mask.shape[1], mask.shape[2], 3), dtype=np.uint8)
 
-    # Przypisujemy kanały maski do odpowiednich kanałów koloru
-    rgb_mask[..., 0] = mask[0, :, :] * 255  # Czerwony dla Necrotic (NEC)
-    rgb_mask[..., 1] = mask[1, :, :] * 255  # Zielony dla Edema (ED)
-    rgb_mask[..., 2] = mask[2, :, :] * 255  # Niebieski dla Tumour (ET)
+    rgb_mask[..., 0] = mask[0, :, :] * 255  
+    rgb_mask[..., 1] = mask[1, :, :] * 255  
+    rgb_mask[..., 2] = mask[2, :, :] * 255 
 
-    # Wyświetlanie obrazu
     plt.figure(figsize=(8, 8))
     plt.imshow(rgb_mask)
     plt.title(title, fontsize=20, y=1.02)
@@ -101,13 +99,12 @@ def display_combined_mask_as_rgb(mask, title='Combined Mask as RGB'):
     plt.show()
 
 def display_combined_predicted_mask_as_rgb(pred_mask, title='Predicted Combined Mask'):
-    # Tworzymy obraz RGB, gdzie każda klasa jest innym kolorem
-    rgb_pred_mask = np.zeros((pred_mask.shape[0], pred_mask.shape[1], 3), dtype=np.uint8)
-    rgb_pred_mask[pred_mask == 1] = [255, 0, 0]   # Czerwony dla NEC
-    rgb_pred_mask[pred_mask == 2] = [0, 255, 0]   # Zielony dla ED
-    rgb_pred_mask[pred_mask == 3] = [0, 0, 255]   # Niebieski dla ET
 
-    # Wyświetlanie obrazu
+    rgb_pred_mask = np.zeros((pred_mask.shape[0], pred_mask.shape[1], 3), dtype=np.uint8)
+    rgb_pred_mask[pred_mask == 1] = [255, 0, 0]   
+    rgb_pred_mask[pred_mask == 2] = [0, 255, 0]  
+    rgb_pred_mask[pred_mask == 3] = [0, 0, 255]   
+
     plt.figure(figsize=(8, 8))
     plt.imshow(rgb_pred_mask)
     plt.title(title, fontsize=20, y=1.02)
@@ -123,11 +120,11 @@ def overlay_prediction(image, pred_mask, title='Prediction Overlay'):
     rgb_image = np.stack([t1_image_normalized] * 3, axis=-1)
 
     rgb_pred = np.zeros((pred_mask.shape[0], pred_mask.shape[1], 3), dtype=np.float32)
-    rgb_pred[..., 0] = (pred_mask == 1).astype(np.float32)  # Czerwony dla NEC
-    rgb_pred[..., 1] = (pred_mask == 2).astype(np.float32)  # Zielony dla ED
-    rgb_pred[..., 2] = (pred_mask == 3).astype(np.float32)  # Niebieski dla ET
+    rgb_pred[..., 0] = (pred_mask == 1).astype(np.float32)  
+    rgb_pred[..., 1] = (pred_mask == 2).astype(np.float32)  
+    rgb_pred[..., 2] = (pred_mask == 3).astype(np.float32)  
 
-    overlay = np.clip(rgb_image + rgb_pred * 0.5, 0, 1)  # 0.5 = przezroczystość przewidywań
+    overlay = np.clip(rgb_image + rgb_pred * 0.5, 0, 1)  
 
     return overlay
 

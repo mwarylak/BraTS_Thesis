@@ -66,9 +66,9 @@ class Net(nn.Module):
         super().__init__()
 
         # Config
-        in_channels  = 4   # Input images have 4 channels
-        out_channels = 3   # Mask has 3 channels
-        n_filters    = 32  # Scaled down from 64 in original paper
+        in_channels  = 4   
+        out_channels = 3   
+        n_filters    = 32  
         activation   = nn.ReLU()
         if activation_fun == 'LeakyReLU':
           activation = nn.LeakyReLU(negative_slope=0.1)

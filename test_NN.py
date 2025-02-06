@@ -32,7 +32,7 @@ def load_model(model, path):
 def main():
     
     test_directory = '/content/BraTS_Thesis/Files/Test_Samples'
-    with open('/content/BraTS_Thesis/NN_config.json', 'r') as f:
+    with open('/content/BraTS_Thesis/config_files/NN_config.json', 'r') as f:
         train_config = json.load(f)
 
     test_files = [os.path.join(test_directory, f) for f in os.listdir(test_directory) if f.endswith('.h5')]

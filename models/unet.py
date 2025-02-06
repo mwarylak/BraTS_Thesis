@@ -31,9 +31,8 @@ class Net(nn.Module):
     def __init__(self, activation_fun):
         super().__init__()
 
-        # Config
-        in_channels  = 4   # Input images have 4 channels
-        out_channels = 3   # Mask has 3 channels
+        in_channels  = 4   
+        out_channels = 3  
         n_filters    = 32
         activation   = nn.ReLU()
         if activation_fun == 'LeakyReLU':
@@ -66,7 +65,7 @@ class Net(nn.Module):
         self.dec_block_2 = DecoderBlock( 4*n_filters, 1*n_filters, activation)
         self.dec_block_1 = DecoderBlock( 2*n_filters, 1*n_filters, activation)
 
-        # Output projection
+        # Output 
         self.output = nn.Conv2d(1*n_filters,  out_channels, kernel_size=(1,1), stride=1, padding=0)
 
 
@@ -86,16 +85,16 @@ class Net(nn.Module):
 
         # Decoder
         x      = self.upsample(x)
-        x      = torch.cat((x, skip_4), axis=1)  # Skip connection
+        x      = torch.cat((x, skip_4), axis=1) 
         x      = self.dec_block_4(x)
         x      = self.upsample(x)
-        x      = torch.cat((x, skip_3), axis=1)  # Skip connection
+        x      = torch.cat((x, skip_3), axis=1)  
         x      = self.dec_block_3(x)
         x      = self.upsample(x)
-        x      = torch.cat((x, skip_2), axis=1)  # Skip connection
+        x      = torch.cat((x, skip_2), axis=1)  
         x      = self.dec_block_2(x)
         x      = self.upsample(x)
-        x      = torch.cat((x, skip_1), axis=1)  # Skip connection
+        x      = torch.cat((x, skip_1), axis=1)  
         x      = self.dec_block_1(x)
         x      = self.output(x)
         return x

@@ -45,7 +45,6 @@ class Net(nn.Module):
     def __init__(self, activation_fun):
         super().__init__()
 
-        # Config
         in_channels  = 4   
         out_channels = 3   
         n_filters    = 32 
@@ -56,7 +55,7 @@ class Net(nn.Module):
         else:
             print('Activation: ReLU')
 
-        # Up and downsampling methods
+        # Up and downsampling 
         self.downsample  = nn.MaxPool2d((2,2), stride=2)
         self.upsample    = nn.UpsamplingBilinear2d(scale_factor=2)
 
@@ -84,7 +83,7 @@ class Net(nn.Module):
         self.dec_block_2 = DecoderBlock(2*n_filters, 1*n_filters, activation)
         self.dec_block_1 = DecoderBlock(1*n_filters, 1*n_filters, activation)
 
-        # Output projection
+        # Output 
         self.output      = nn.Conv2d(1*n_filters,  out_channels, kernel_size=(1,1), stride=1, padding=0)
 
     def forward(self, x):
@@ -103,16 +102,16 @@ class Net(nn.Module):
 
         # Decoder
         x      = self.upsample(x)
-        x      = torch.add(x, skip_4)  # Skip connection
+        x      = torch.add(x, skip_4)  
         x      = self.dec_block_4(x)
         x      = self.upsample(x)
-        x      = torch.add(x, skip_3)  # Skip connection
+        x      = torch.add(x, skip_3)  
         x      = self.dec_block_3(x)
         x      = self.upsample(x)
-        x      = torch.add(x, skip_2)  # Skip connection
+        x      = torch.add(x, skip_2) 
         x      = self.dec_block_2(x)
         x      = self.upsample(x)
-        x      = torch.add(x, skip_1)  # Skip connection
+        x      = torch.add(x, skip_1) 
         x      = self.dec_block_1(x)
         x      = self.output(x)
         return x

@@ -90,7 +90,7 @@ class Net(nn.Module):
         self.dec_block_2 = DecoderBlock(2*n_filters, 1*n_filters, activation)
         self.dec_block_1 = DecoderBlock(1*n_filters, 1*n_filters, activation)
 
-        # Output projection
+        # Output 
         self.output      = nn.Conv2d(1*n_filters,  out_channels, kernel_size=(1,1), stride=1, padding=0)
 
     def forward(self, x):

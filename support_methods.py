@@ -7,7 +7,6 @@ def sample_h5_file(dir, files, index, name = ""):
       sample_file_path = os.path.join(dir, name)
     else:
       sample_file_path = os.path.join(dir, files[index])
-    #print(files[index])
     with h5py.File(sample_file_path, 'r') as file:
       image = file['image'][()].transpose(2, 0, 1)
       mask = file['mask'][()].transpose(2, 0, 1)
