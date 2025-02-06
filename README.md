@@ -57,4 +57,5 @@ For UNet with ResNet:
 Implementation of all models and their training and testing are also possible through the BraTS_Segmentation_NN.ipynb notebook. However, it requires running more consecutive cells and attaching the corresponding files from the GitHub repository.
 
 For training and testing of Random Forest and SVM models, also the BraTS_Segmentation.ipynb notebook is used. To run training or testing of the corresponding models also needs to complete the configuration file ML_config.json by selecting the name of the model to train and then run the cell with the script train_ML.py or test_ML.py.
-In the case of the Random Forest algorithm, there is no way to test it - the trained model is too large to store in a git repository. First you need to do the training and then use the trained model for testing.
+In the case of the Random Forest algorithm, there is no way to test it - the trained model is too large to store in a git repository. First you need to do the training and then use the trained model for testing. 
+There is also a notebook available where you can run more cells to get the results - BraTS_Segmentation_ML.ipynb.
