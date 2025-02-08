@@ -49,11 +49,11 @@ def main():
 
     elif train_config['model'] == "AttentionUNet":
         model = attention.Net(train_config['activation_fun']).to(device)  
-        model = load_model(model, path='/content/BraTS_Thesis/models_weights/attentionunet_weights.pth')
+        model = load_model(model, path='/content/BraTS_Thesis/models_weights/attention_unet_weights.pth')
 
     elif train_config['model'] == "ResNetUNet":
         model = resnet.Net(train_config['activation_fun']).to(device)  
-        model = load_model(model, path='/content/BraTS_Thesis/models_weights/resnetunet_weights.pth')
+        model = load_model(model, path='/content/BraTS_Thesis/models_weights/resnet_unet_weights.pth')
 
     test_sample_from_saved_model(model, test_input, test_target, device)
 
